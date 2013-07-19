@@ -20,8 +20,13 @@ class ArrayPath extends URL {
 
     @Override
     protected void format(final Appendable out) throws IOException {
-        if (mParts == null || mParts.length == 0)
+        if (mParts == null)
             return;
+
+        if (mParts.length == 0) {
+            out.append('/');
+            return;
+        }
 
         for (final String part : mParts) {
             out.append('/');

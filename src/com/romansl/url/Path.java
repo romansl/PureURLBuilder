@@ -24,7 +24,7 @@ class Path extends URL {
         if (mName == null)
             return;
 
-        if (mName.charAt(0) != '/') {
+        if (mName.length() == 0 || mName.charAt(0) != '/') {
             out.append('/');
         }
 

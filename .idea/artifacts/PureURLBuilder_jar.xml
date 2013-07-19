@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact name="PureURLBuilder:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PureURLBuilder_jar</output-path>
+    <root id="root">
+      <element id="archive" name="PureURLBuilder.jar">
+        <element id="module-output" name="PureURLBuilder" />
+      </element>
+    </root>
+  </artifact>
+</component>

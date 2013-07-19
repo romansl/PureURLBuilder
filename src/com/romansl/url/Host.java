@@ -19,6 +19,8 @@ class Host extends URL {
 
     @Override
     protected void format(final Appendable out) throws IOException {
-        out.append(mName);
+        if (mName != null) {
+            out.append(mName);
+        }
     }
 }
