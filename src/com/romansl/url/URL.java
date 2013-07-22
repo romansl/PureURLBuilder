@@ -1,21 +1,16 @@
 package com.romansl.url;
 
+import org.apache.http.NameValuePair;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
-public abstract class URL {
-    private static final URL EMPTY = new URL(null) {
-        @Override
-        protected void store(final Storage storage) {
-
-        }
-
-        @Override
-        protected void format(final Appendable out) {
-
-        }
-    };
+public class URL {
+    private static final URL EMPTY = new URL(null);
+    private static final URL HTTP = new Scheme(null, "http");
+    private static final URL HTTPS = new Scheme(null, "https");
 
     private final URL mNext;
 
@@ -23,11 +18,24 @@ public abstract class URL {
         mNext = next;
     }
 
-    protected abstract void store(Storage storage);
-    protected abstract void format(final Appendable out) throws IOException;
+    protected void store(final Storage storage) {
+
+    }
+
+    protected void format(final Appendable out) throws IOException {
+
+    }
 
     public static URL empty() {
         return EMPTY;
+    }
+
+    public static URL http() {
+        return HTTP;
+    }
+
+    public static URL https() {
+        return HTTPS;
     }
 
     public URL withHost(final String name) {
@@ -54,6 +62,18 @@ public abstract class URL {
         return new Fragment(this, fragment);
     }
 
+    public URL withParam(final String name, final int value) {
+        return new Param(this, name, Integer.toString(value));
+    }
+
+    public URL withParam(final String name, final long value) {
+        return new Param(this, name, Long.toString(value));
+    }
+
+    public URL withParam(final String name, final boolean value) {
+        return new Param(this, name, Boolean.toString(value));
+    }
+
     public URL withParam(final String name, final String value) {
         return new Param(this, name, value);
     }
@@ -65,6 +85,23 @@ public abstract class URL {
     public URL withParam(final String name, final String[] values) {
         return new ArrayParam(this, name, values);
     }
+
+    public URL withParam(final Collection<NameValuePair> pairList) {
+        URL next = this;
+        for (final NameValuePair item : pairList) {
+            next = new Param(next, item.getName(), item.getValue());
+        }
+        return next;
+    }
+
+    public URL withParam(final Map<String, String> map) {
+        URL next = this;
+        for (final Map.Entry<String, String> item : map.entrySet()) {
+            next = new Param(next, item.getKey(), item.getValue());
+        }
+        return next;
+    }
+
 
     @Override
     public String toString() {
@@ -88,8 +125,6 @@ public abstract class URL {
 
         if (storage.mScheme != null) {
             storage.mScheme.format(out);
-        } else {
-            out.append("http://");
         }
 
         if (storage.mHost != null) {
@@ -100,9 +135,8 @@ public abstract class URL {
             storage.mPort.format(out);
         }
 
-        final URL path = storage.mPath;
-        if (path != null) {
-            path.format(out);
+        if (storage.mPath != null) {
+            storage.mPath.format(out);
         }
 
         final Collection<URL> query = storage.values();
