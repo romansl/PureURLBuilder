@@ -8,4 +8,5 @@ class Storage extends HashMap<String, URL> {
     URL mPort;
     URL mPath;
     URL mFragment;
+    boolean hasArrayParam;
 }

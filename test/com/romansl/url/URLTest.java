@@ -2,7 +2,10 @@ package com.romansl.url;
 
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -39,5 +42,26 @@ public class URLTest {
         map.put("a", "foo");
         map.put("b", "аб");
         assertEquals("http://google.com?b=%D0%B0%D0%B1&a=foo", google.withParam(map).toString());
+    }
+
+    @Test
+    public void testParamIterator() {
+        final List<String> array = Arrays.asList("31", "32");
+        final Iterable<Map.Entry<String, String>> params = google
+                .withParam("a", 1)
+                .withParam("b", 2)
+                .withParam("c", array)
+                .withParam("d", 4)
+                .withParam("e", array)
+                .getParams();
+        assertEquals("d4e31e32b2c31c32a1", toString(params));
+    }
+
+    private static String toString(final Iterable<Map.Entry<String, String>> params) {
+        final StringBuilder builder = new StringBuilder();
+        for (final Map.Entry<String, String> entry : params) {
+            builder.append(entry.getKey()).append(entry.getValue());
+        }
+        return builder.toString();
     }
 }

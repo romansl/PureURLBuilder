@@ -26,4 +26,8 @@ class Param extends URL {
         out.append('=');
         out.append(mValue != null ? URLEncoder.encode(mValue, "UTF-8") : "");
     }
+
+    public Pair toNameValuePair() {
+        return new Pair(mName, mValue);
+    }
 }

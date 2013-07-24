@@ -154,4 +154,23 @@ public class URL {
             storage.mFragment.format(out);
         }
     }
+
+    public Iterable<Map.Entry<String, String>> getParams() {
+        return new Iterable<Map.Entry<String, String>>() {
+            @Override
+            public Iterator<Map.Entry<String, String>> iterator() {
+                final Storage storage = new Storage();
+
+                URL item = URL.this;
+                while (item != null) {
+                    item.store(storage);
+                    item = item.mNext;
+                }
+
+                final Iterator<Map.Entry<String, URL>> iterator = storage.entrySet().iterator();
+                return storage.hasArrayParam ? new ParamIterator(iterator) : new SimpleParamIterator(iterator);
+            }
+        };
+    }
+
 }
