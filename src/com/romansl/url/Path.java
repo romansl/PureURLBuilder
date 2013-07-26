@@ -33,7 +33,7 @@ class Path extends URL {
             final String element = st.nextToken();
             if ("/".equals(element)) {
                 out.append(element);
-            } else if (!element.isEmpty()) {
+            } else if (element.length() != 0) {
                 out.append(URLEncoder.encode(element, "UTF-8"));
             }
         }
