@@ -78,6 +78,10 @@ public class URL {
         return new Param(this, name, value);
     }
 
+    public URL withParam(final String name, final CharSequence value) {
+        return new Param(this, name, value.toString());
+    }
+
     public URL withParam(final String name, final Collection<String> values) {
         return withParam(name, values.toArray(new String[values.size()]));
     }
