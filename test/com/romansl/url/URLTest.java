@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -38,29 +37,49 @@ public class URLTest {
     }
 
     @Test
+    public void testParam() {
+        assertEquals("http://google.com?foo=bar", google.withParam("foo", "bar").toString());
+        assertEquals("http://google.com?foo=ggg", google.withParam("foo", "bar").withParam("foo", "ggg").toString());
+        assertEquals("http://google.com?b=%D0%B0%D0%B1&a=12", google.withParam("a", "12").withParam("b", "аб").toString());
+    }
+
+    @Test
+    public void testArrayParam() {
+        final List<String> array = Arrays.asList("31", "32");
+        final URL params = google
+                .withParam("a", 1)
+                .withParam("b", 2)
+                .withParam("c", array)
+                .withParam("d", 4)
+                .withParam("e", array);
+        assertEquals("http://google.com?e=31&e=32&c=31&c=32&b=2&a=1&d=4", params.toString());
+        assertEquals("http://google.com?e=31&e=32&c=31&c=32&a=31&a=32&b=2&d=4", params.withParam("a", array).toString());
+    }
+
+    @Test
     public void testMapParam() {
         final HashMap<String, String> map = new HashMap<String, String>();
         map.put("a", "foo");
         map.put("b", "аб");
-        assertEquals("http://google.com?b=%D0%B0%D0%B1&a=foo", google.withParam(map).toString());
+        assertEquals("http://google.com?a=foo&b=%D0%B0%D0%B1", google.withParam(map).toString());
     }
 
     @Test
     public void testParamIterator() {
         final List<String> array = Arrays.asList("31", "32");
-        final Iterable<Map.Entry<String, String>> params = google
+        final Iterable<Param> params = google
                 .withParam("a", 1)
                 .withParam("b", 2)
                 .withParam("c", array)
                 .withParam("d", 4)
                 .withParam("e", array)
                 .getParams();
-        assertEquals("d4e31e32b2c31c32a1", toString(params));
+        assertEquals("e31e32c31c32b2a1d4", toString(params));
     }
 
-    private static String toString(final Iterable<Map.Entry<String, String>> params) {
+    private static String toString(final Iterable<Param> params) {
         final StringBuilder builder = new StringBuilder();
-        for (final Map.Entry<String, String> entry : params) {
+        for (final Param entry : params) {
             builder.append(entry.getKey()).append(entry.getValue());
         }
         return builder.toString();
@@ -68,7 +87,7 @@ public class URLTest {
 
     @Test
     public void testParse() throws IOException {
-        final String expected = "http://google.com:1234/100%25/%D0%B0+%D0%B1?b=%D0%B0%D0%B1&c=&a=foo";
-        assertEquals(expected, URL.parse(expected).toString());
+        assertEquals("http://google.com:1234/100%25/%D0%B0+%D0%B1?c=&a=foo&b=%D0%B0%D0%B1",
+                URL.parse("http://google.com:1234/100%25/%D0%B0+%D0%B1?b=%D0%B0%D0%B1&c=&a=foo").toString());
     }
 }

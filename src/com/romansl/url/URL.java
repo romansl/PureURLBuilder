@@ -147,10 +147,9 @@ public class URL {
             storage.mPath.format(out);
         }
 
-        final Collection<URL> query = storage.values();
-        if (!query.isEmpty()) {
+        if (!storage.isEmpty()) {
             out.append('?');
-            final Iterator<URL> iterator = query.iterator();
+            final Iterator<BaseParam> iterator = storage.iterator();
             iterator.next().format(out);
             while (iterator.hasNext()) {
                 out.append('&');
@@ -163,10 +162,10 @@ public class URL {
         }
     }
 
-    public Iterable<Map.Entry<String, String>> getParams() {
-        return new Iterable<Map.Entry<String, String>>() {
+    public Iterable<Param> getParams() {
+        return new Iterable<Param>() {
             @Override
-            public Iterator<Map.Entry<String, String>> iterator() {
+            public Iterator<Param> iterator() {
                 final Storage storage = new Storage();
 
                 URL item = URL.this;
@@ -175,7 +174,7 @@ public class URL {
                     item = item.mNext;
                 }
 
-                final Iterator<Map.Entry<String, URL>> iterator = storage.entrySet().iterator();
+                final Iterator<BaseParam> iterator = storage.iterator();
                 return storage.hasArrayParam ? new ParamIterator(iterator) : new SimpleParamIterator(iterator);
             }
         };

@@ -1,12 +1,13 @@
 package com.romansl.url;
 
 import java.util.Iterator;
-import java.util.Map;
 
-class SimpleParamIterator implements Iterator<Map.Entry<String, String>> {
-    private final Iterator<Map.Entry<String, URL>> mIterator;
+class SimpleParamIterator implements Iterator<Param> {
+    private final Iterator<BaseParam> mIterator;
 
-    public SimpleParamIterator(final Iterator<Map.Entry<String, URL>> iterator) {mIterator = iterator;}
+    public SimpleParamIterator(final Iterator<BaseParam> iterator) {
+        mIterator = iterator;
+    }
 
     @Override
     public boolean hasNext() {
@@ -14,9 +15,8 @@ class SimpleParamIterator implements Iterator<Map.Entry<String, String>> {
     }
 
     @Override
-    public Map.Entry<String, String> next() {
-        final Map.Entry<String, URL> next = mIterator.next();
-        return ((Param) next.getValue()).toNameValuePair();
+    public Param next() {
+        return ((Param) mIterator.next());
     }
 
     @Override

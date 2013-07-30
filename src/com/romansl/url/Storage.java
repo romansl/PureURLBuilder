@@ -1,8 +1,6 @@
 package com.romansl.url;
 
-import java.util.HashMap;
-
-class Storage extends HashMap<String, URL> {
+class Storage extends HashSet<BaseParam> {
     URL mScheme;
     URL mHost;
     URL mPort;

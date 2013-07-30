@@ -1,13 +1,12 @@
 package com.romansl.url;
 
 import java.util.Iterator;
-import java.util.Map;
 
-class ParamIterator implements Iterator<Map.Entry<String, String>> {
-    private final Iterator<Map.Entry<String, URL>> mStorageIterator;
-    private Iterator<Map.Entry<String, String>> mItemIterator;
+class ParamIterator implements Iterator<Param> {
+    private final Iterator<BaseParam> mStorageIterator;
+    private Iterator<Param> mItemIterator;
 
-    public ParamIterator(final Iterator<Map.Entry<String, URL>> iterator) {
+    public ParamIterator(final Iterator<BaseParam> iterator) {
         mStorageIterator = iterator;
     }
 
@@ -17,15 +16,14 @@ class ParamIterator implements Iterator<Map.Entry<String, String>> {
     }
 
     @Override
-    public Map.Entry<String, String> next() {
+    public Param next() {
         if (mItemIterator == null || !mItemIterator.hasNext()) {
-            final Map.Entry<String, URL> next = mStorageIterator.next();
-            final URL value = next.getValue();
+            final BaseParam value = mStorageIterator.next();
             if (value instanceof ArrayParam) {
                 mItemIterator =  ((ArrayParam) value).iterator();
             } else {
                 mItemIterator = null;
-                return ((Param) value).toNameValuePair();
+                return ((Param) value);
             }
         }
 
