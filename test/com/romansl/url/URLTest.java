@@ -2,6 +2,7 @@ package com.romansl.url;
 
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -63,5 +64,11 @@ public class URLTest {
             builder.append(entry.getKey()).append(entry.getValue());
         }
         return builder.toString();
+    }
+
+    @Test
+    public void testParse() throws IOException {
+        final String expected = "http://google.com:1234/100%25/%D0%B0+%D0%B1?b=%D0%B0%D0%B1&c=&a=foo";
+        assertEquals(expected, URL.parse(expected).toString());
     }
 }

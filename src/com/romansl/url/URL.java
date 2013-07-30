@@ -3,9 +3,13 @@ package com.romansl.url;
 import org.apache.http.NameValuePair;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 public class URL {
     private static final URL EMPTY = new URL(null);
@@ -177,4 +181,58 @@ public class URL {
         };
     }
 
+    public static URL parse(final String src) throws IOException {
+        final java.net.URL url = new java.net.URL(src);
+        URL result = URL.empty().withScheme(url.getProtocol());
+
+        final String host = url.getHost();
+        if (host != null && host.length() != 0) {
+            result = result.withHost(host);
+        }
+
+        final int port = url.getPort();
+        if (port >= 0) {
+            result = result.withPort(port);
+        }
+
+        final String path = url.getPath();
+        if (path != null && path.length() != 0) {
+            result = result.withPath(parsePath(path));
+        }
+
+        final String query = url.getQuery();
+        if (query != null && query.length() != 0) {
+            result = parseQuery(result, query);
+        }
+
+        return result;
+    }
+
+    private static URL parseQuery(URL result, final String query) throws UnsupportedEncodingException {
+        final Pattern pattern = Pattern.compile("=");
+        for (final String part : query.split("&")) {
+            final String[] kvp = pattern.split(part, 2);
+            final String key = URLDecoder.decode(kvp[0], "UTF-8");
+            final String value = kvp.length == 2 ? URLDecoder.decode(kvp[1], "UTF-8") : null;
+            result = result.withParam(key, value);
+        }
+
+        return result;
+    }
+
+    private static String parsePath(final String path) throws UnsupportedEncodingException {
+        final StringBuilder out = new StringBuilder(path.length());
+
+        final StringTokenizer st = new StringTokenizer(path, "/", true);
+        while (st.hasMoreElements()) {
+            final String element = st.nextToken();
+            if ("/".equals(element)) {
+                out.append('/');
+            } else if (element.length() != 0) {
+                out.append(URLDecoder.decode(element, "UTF-8"));
+            }
+        }
+
+        return out.toString();
+    }
 }
