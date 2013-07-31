@@ -8,7 +8,6 @@ import java.lang.reflect.Array;
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * A memory-efficient hash set.
@@ -102,7 +101,11 @@ class HashSet<E> extends AbstractSet<E> implements Serializable {
 
     @Override
     public Iterator<E> iterator() {
-        return new SetIterator();
+        return new RawArrayIterator<E>(table);
+    }
+
+    public <T> Iterator<T> iteratorType() {
+        return new RawArrayIterator<T>(table);
     }
 
     @Override
@@ -164,14 +167,14 @@ class HashSet<E> extends AbstractSet<E> implements Serializable {
     /**
      * Returns whether two items are equal for the purposes of this set.
      */
-    protected boolean itemEquals(final Object a, final Object b) {
+    protected static boolean itemEquals(final Object a, final Object b) {
         return a == null ? b == null : a.equals(b);
     }
 
     /**
      * Return the hashCode for an item.
      */
-    protected int itemHashCode(final Object o) {
+    protected static int itemHashCode(final Object o) {
         return o == null ? 0 : o.hashCode();
     }
 
@@ -302,10 +305,6 @@ class HashSet<E> extends AbstractSet<E> implements Serializable {
         }
     }
 
-    public Object[] rawArray() {
-        return table;
-    }
-
     private void readObject(final ObjectInputStream in) throws IOException,
             ClassNotFoundException {
         in.defaultReadObject();
@@ -317,11 +316,12 @@ class HashSet<E> extends AbstractSet<E> implements Serializable {
         doWriteObject(out);
     }
 
-    private class SetIterator implements Iterator<E> {
+    private static class RawArrayIterator<E> implements Iterator<E> {
+        private final Object[] table;
         private int index;
-        private int last = -1;
 
-        public SetIterator() {
+        public RawArrayIterator(final Object[] src) {
+            table = src;
             advanceToItem();
         }
 
@@ -333,9 +333,6 @@ class HashSet<E> extends AbstractSet<E> implements Serializable {
         @Override
         @SuppressWarnings("unchecked")
         public E next() {
-            if (!hasNext())
-                throw new NoSuchElementException();
-            last = index;
             final E toReturn = (E) unmaskNull(table[index++]);
             advanceToItem();
             return toReturn;
@@ -343,13 +340,7 @@ class HashSet<E> extends AbstractSet<E> implements Serializable {
 
         @Override
         public void remove() {
-            if (last < 0)
-                throw new IllegalStateException();
-            internalRemove(last);
-            if (table[last] != null) {
-                index = last;
-            }
-            last = -1;
+
         }
 
         private void advanceToItem() {

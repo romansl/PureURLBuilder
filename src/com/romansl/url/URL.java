@@ -174,8 +174,9 @@ public class URL {
                     item = item.mNext;
                 }
 
-                final Iterator<BaseParam> iterator = storage.iterator();
-                return storage.hasArrayParam ? new ParamIterator(iterator) : new SimpleParamIterator(iterator);
+                return storage.hasArrayParam
+                        ? new ParamIterator(storage.iterator())
+                        : storage.<Param>iteratorType();
             }
         };
     }
