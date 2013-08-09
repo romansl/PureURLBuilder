@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
@@ -22,7 +21,7 @@ public class URL {
         mNext = next;
     }
 
-    protected void store(final Storage storage) {
+    protected void store(final FinalURL storage) {
 
     }
 
@@ -110,75 +109,25 @@ public class URL {
         return next;
     }
 
-
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        try {
-            build(sb);
-        } catch (final IOException ignored) {
-
-        }
-        return sb.toString();
+        return toFinalUrl().toString();
     }
 
-    public void build(final Appendable out) throws IOException {
-        final Storage storage = new Storage();
+    public FinalURL toFinalUrl() {
+        final FinalURL out = new FinalURL();
 
         URL item = this;
         while (item != null) {
-            item.store(storage);
+            item.store(out);
             item = item.mNext;
         }
 
-        if (storage.mScheme != null) {
-            storage.mScheme.format(out);
-        }
-
-        if (storage.mHost != null) {
-            storage.mHost.format(out);
-        }
-
-        if (storage.mPort != null) {
-            storage.mPort.format(out);
-        }
-
-        if (storage.mPath != null) {
-            storage.mPath.format(out);
-        }
-
-        if (!storage.isEmpty()) {
-            out.append('?');
-            final Iterator<BaseParam> iterator = storage.iterator();
-            iterator.next().format(out);
-            while (iterator.hasNext()) {
-                out.append('&');
-                iterator.next().format(out);
-            }
-        }
-
-        if (storage.mFragment != null) {
-            storage.mFragment.format(out);
-        }
+        return out;
     }
 
-    public Iterable<Param> getParams() {
-        return new Iterable<Param>() {
-            @Override
-            public Iterator<Param> iterator() {
-                final Storage storage = new Storage();
-
-                URL item = URL.this;
-                while (item != null) {
-                    item.store(storage);
-                    item = item.mNext;
-                }
-
-                return storage.hasArrayParam
-                        ? new ParamIterator(storage.iterator())
-                        : storage.<Param>iteratorType();
-            }
-        };
+    public void build(final Appendable out) throws IOException {
+        toFinalUrl().build(out);
     }
 
     public static URL parse(final String src) throws IOException {
@@ -234,5 +183,13 @@ public class URL {
         }
 
         return out.toString();
+    }
+
+    String getStringContent() {
+        return "";
+    }
+
+    int getIntContent() {
+        return 0;
     }
 }

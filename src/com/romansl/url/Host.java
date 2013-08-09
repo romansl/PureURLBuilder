@@ -5,13 +5,13 @@ import java.io.IOException;
 class Host extends URL {
     private final String mName;
 
-    public Host(final URL next, final String name) {
+    Host(final URL next, final String name) {
         super(next);
         mName = name;
     }
 
     @Override
-    public void store(final Storage storage) {
+    public void store(final FinalURL storage) {
         if (storage.mHost == null) {
             storage.mHost = this;
         }
@@ -22,5 +22,10 @@ class Host extends URL {
         if (mName != null) {
             out.append(mName);
         }
+    }
+
+    @Override
+    String getStringContent() {
+        return mName == null ? "" : mName;
     }
 }

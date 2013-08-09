@@ -5,13 +5,13 @@ import java.io.IOException;
 class Scheme extends URL {
     private final String mScheme;
 
-    public Scheme(final URL url, final String scheme) {
+    Scheme(final URL url, final String scheme) {
         super(url);
         mScheme = scheme;
     }
 
     @Override
-    protected void store(final Storage storage) {
+    protected void store(final FinalURL storage) {
         if (storage.mScheme == null) {
             storage.mScheme = this;
         }
@@ -19,7 +19,14 @@ class Scheme extends URL {
 
     @Override
     protected void format(final Appendable out) throws IOException {
-        out.append(mScheme);
-        out.append("://");
+        if (mScheme != null && mScheme.length() != 0) {
+            out.append(mScheme);
+            out.append("://");
+        }
+    }
+
+    @Override
+    String getStringContent() {
+        return mScheme == null ? "" : mScheme;
     }
 }

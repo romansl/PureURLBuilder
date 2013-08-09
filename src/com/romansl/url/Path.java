@@ -7,13 +7,13 @@ import java.util.StringTokenizer;
 class Path extends URL {
     private final String mName;
 
-    public Path(final URL url, final String name) {
+    Path(final URL url, final String name) {
         super(url);
         mName = name;
     }
 
     @Override
-    public void store(final Storage storage) {
+    public void store(final FinalURL storage) {
         if (storage.mPath == null) {
             storage.mPath = this;
         }
@@ -37,5 +37,10 @@ class Path extends URL {
                 out.append(URLEncoder.encode(element, "UTF-8"));
             }
         }
+    }
+
+    @Override
+    String getStringContent() {
+        return mName == null ? "" : mName;
     }
 }

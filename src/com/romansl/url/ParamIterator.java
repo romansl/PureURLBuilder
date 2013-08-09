@@ -6,7 +6,7 @@ class ParamIterator implements Iterator<Param> {
     private final Iterator<BaseParam> mStorageIterator;
     private Iterator<Param> mItemIterator;
 
-    public ParamIterator(final Iterator<BaseParam> iterator) {
+    ParamIterator(final Iterator<BaseParam> iterator) {
         mStorageIterator = iterator;
     }
 

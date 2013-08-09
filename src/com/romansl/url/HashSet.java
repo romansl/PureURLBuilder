@@ -82,6 +82,15 @@ class HashSet<E> extends AbstractSet<E> implements Serializable {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
+    E get(final E e) {
+        final int index = find(e);
+        if (index < 0)
+            return null;
+
+        return (E) unmaskNull(table[index]);
+    }
+
     @Override
     public boolean addAll(final Collection<? extends E> c) {
         ensureSizeFor(size + c.size());

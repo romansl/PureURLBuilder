@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class URLTest {
     final URL google = URL.http().withHost("google.com");
@@ -73,7 +75,7 @@ public class URLTest {
                 .withParam("c", array)
                 .withParam("d", 4)
                 .withParam("e", array)
-                .getParams();
+                .toFinalUrl().getParams();
         assertEquals("e31e32c31c32b2a1d4", toString(params));
     }
 
@@ -89,5 +91,27 @@ public class URLTest {
     public void testParse() throws IOException {
         assertEquals("http://google.com:1234/100%25/%D0%B0+%D0%B1?c=&a=foo&b=%D0%B0%D0%B1",
                 URL.parse("http://google.com:1234/100%25/%D0%B0+%D0%B1?b=%D0%B0%D0%B1&c=&a=foo").toString());
+    }
+
+    @Test
+    public void testEquals() {
+        final URL u1 = google.withPath("abc").withParam("a", 1).withParam("b", 2);
+        final URL u2 = google.withPath("abc").withParam("b", 2).withParam("a", 1);
+        final FinalURL fu1 = u1.toFinalUrl();
+
+        assertTrue(fu1.equals(u2.toFinalUrl()));
+        assertFalse(fu1.equals(u2.withParam("c", 3).toFinalUrl()));
+        assertFalse(fu1.equals(u2.withParam("a", 11).toFinalUrl()));
+        assertFalse(fu1.equals(u2.withHost("microsoft.com").toFinalUrl()));
+        assertFalse(fu1.equals(u2.withScheme("https").toFinalUrl()));
+    }
+
+    @Test
+    public void testHashCode() {
+        final URL u1 = google.withPath("abc").withParam("a", 1).withParam("b", 2);
+        final URL u2 = google.withPath("abc").withParam("b", 2).withParam("a", 1);
+
+        assertFalse(u1.toString().hashCode() == u2.toString().hashCode());
+        assertEquals(u1.toFinalUrl().hashCode(), u2.toFinalUrl().hashCode());
     }
 }

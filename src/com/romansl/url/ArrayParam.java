@@ -5,15 +5,15 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 
 class ArrayParam extends BaseParam implements Iterable<Param> {
-    private final String[] mValues;
+    final String[] mValues;
 
-    public ArrayParam(final URL url, final String key, final String[] values) {
+    ArrayParam(final URL url, final String key, final String[] values) {
         super(url, key);
-        mValues = values;
+        mValues = values == null ? new String[0] : values;
     }
 
     @Override
-    public void store(final Storage storage) {
+    public void store(final FinalURL storage) {
         if (storage.add(this)) {
             storage.hasArrayParam = true;
         }
@@ -58,5 +58,54 @@ class ArrayParam extends BaseParam implements Iterable<Param> {
 
             }
         };
+    }
+
+    @Override
+    boolean equalValues(final BaseParam param2) {
+        final String[] values1 = mValues;
+        if (param2 instanceof Param) {
+            return values1.length == 1 && ((Param) param2).mValue.equals(values1[0]);
+        } else {
+            final String[] values2 = ((ArrayParam) param2).mValues;
+            if (values1.length != values2.length)
+                return false;
+
+            for (final String item : values1) {
+                if (!contains(values2, item))
+                    return false;
+            }
+
+            return true;
+        }
+    }
+
+    private static boolean contains(final String[] array, final String value) {
+        if (value == null) {
+            for (final String item : array) {
+                if (item == null)
+                    return true;
+            }
+
+            return false;
+        }
+
+        for (final String item : array) {
+            if (value.equals(item))
+                return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    int getValueHashCode() {
+        int result = 0;
+
+        for (final String value : mValues) {
+            result += 31;
+            result += (value == null ? "".hashCode() : value.hashCode());
+        }
+
+        return result;
     }
 }
