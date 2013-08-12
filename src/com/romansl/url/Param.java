@@ -2,6 +2,7 @@ package com.romansl.url;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 public class Param extends BaseParam {
     final String mValue;
@@ -41,5 +42,10 @@ public class Param extends BaseParam {
     @Override
     int getValueHashCode() {
         return 31 + mValue.hashCode();
+    }
+
+    @Override
+    void store(final ArrayList<Param> out) {
+        out.add(this);
     }
 }

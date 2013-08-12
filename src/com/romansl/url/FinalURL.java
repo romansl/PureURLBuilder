@@ -1,6 +1,7 @@
 package com.romansl.url;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public final class FinalURL extends HashSet<BaseParam> {
@@ -76,7 +77,7 @@ public final class FinalURL extends HashSet<BaseParam> {
         return mFragment == null ? "" : mFragment.getStringContent();
     }
 
-    public Iterable<Param> getParams() {
+    public Iterable<Param> getParamsIterable() {
         return new Iterable<Param>() {
             @Override
             public Iterator<Param> iterator() {
@@ -85,6 +86,14 @@ public final class FinalURL extends HashSet<BaseParam> {
                         : FinalURL.this.<Param>iteratorType();
             }
         };
+    }
+
+    public ArrayList<Param> getParamsList() {
+        final ArrayList<Param> out = new ArrayList<Param>(size());
+        for (final BaseParam param : this) {
+            param.store(out);
+        }
+        return out;
     }
 
     @Override

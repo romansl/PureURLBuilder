@@ -75,7 +75,20 @@ public class URLTest {
                 .withParam("c", array)
                 .withParam("d", 4)
                 .withParam("e", array)
-                .toFinalUrl().getParams();
+                .toFinalUrl().getParamsIterable();
+        assertEquals("e31e32c31c32b2a1d4", toString(params));
+    }
+
+    @Test
+    public void testParamList() {
+        final List<String> array = Arrays.asList("31", "32");
+        final Iterable<Param> params = google
+                .withParam("a", 1)
+                .withParam("b", 2)
+                .withParam("c", array)
+                .withParam("d", 4)
+                .withParam("e", array)
+                .toFinalUrl().getParamsList();
         assertEquals("e31e32c31c32b2a1d4", toString(params));
     }
 

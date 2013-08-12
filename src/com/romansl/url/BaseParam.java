@@ -1,6 +1,8 @@
 package com.romansl.url;
 
-abstract class BaseParam extends URL {
+import java.util.ArrayList;
+
+abstract class BaseParam extends URL implements Comparable<BaseParam> {
     protected final String mKey;
 
     protected BaseParam(final URL next, final String key) {
@@ -28,4 +30,10 @@ abstract class BaseParam extends URL {
 
     abstract boolean equalValues(final BaseParam param2);
     abstract int getValueHashCode();
+    abstract void store(final ArrayList<Param> out);
+
+    @Override
+    public int compareTo(final BaseParam another) {
+        return mKey.compareTo(another.mKey);
+    }
 }

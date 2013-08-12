@@ -2,6 +2,7 @@ package com.romansl.url;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 class ArrayParam extends BaseParam implements Iterable<Param> {
@@ -107,5 +108,13 @@ class ArrayParam extends BaseParam implements Iterable<Param> {
         }
 
         return result;
+    }
+
+    @Override
+    void store(final ArrayList<Param> out) {
+        final String key = mKey;
+        for (final String value : mValues) {
+            out.add(new Param(null, key, value));
+        }
     }
 }
