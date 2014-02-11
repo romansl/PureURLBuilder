@@ -157,7 +157,7 @@ public class URL {
         return result;
     }
 
-    private static URL parseQuery(URL result, final String query) throws UnsupportedEncodingException {
+    public static URL parseQuery(URL result, final String query) throws UnsupportedEncodingException {
         final Pattern pattern = Pattern.compile("=");
         for (final String part : query.split("&")) {
             final String[] kvp = pattern.split(part, 2);
