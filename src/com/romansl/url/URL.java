@@ -49,7 +49,7 @@ public class URL {
         return new Path(this, name);
     }
 
-    public URL withPath(final String[] parts) {
+    public URL withPath(final String... parts) {
         return new ArrayPath(this, parts);
     }
 
