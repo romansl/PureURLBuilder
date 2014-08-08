@@ -33,16 +33,27 @@ public final class FinalURL extends HashSet<BaseParam> {
 
         if (!isEmpty()) {
             out.append('?');
-            final Iterator<BaseParam> iterator = iterator();
-            iterator.next().format(out);
-            while (iterator.hasNext()) {
-                out.append('&');
-                iterator.next().format(out);
-            }
+            formatParametersImpl(out);
         }
 
         if (mFragment != null) {
             mFragment.format(out);
+        }
+    }
+
+    public void formatParameters(final Appendable out) throws IOException {
+        if (isEmpty())
+            return;
+
+        formatParametersImpl(out);
+    }
+
+    private void formatParametersImpl(final Appendable out) throws IOException {
+        final Iterator<BaseParam> iterator = iterator();
+        iterator.next().format(out);
+        while (iterator.hasNext()) {
+            out.append('&');
+            iterator.next().format(out);
         }
     }
 
@@ -94,6 +105,19 @@ public final class FinalURL extends HashSet<BaseParam> {
             param.store(out);
         }
         return out;
+    }
+
+    public String getParamsString() {
+        if (isEmpty())
+            return "";
+
+        final StringBuilder sb = new StringBuilder();
+        try {
+            formatParametersImpl(sb);
+        } catch (final IOException ignored) {
+
+        }
+        return sb.toString();
     }
 
     @Override
