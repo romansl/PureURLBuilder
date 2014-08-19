@@ -1,0 +1,96 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+group = 'com.romansl'
+archivesBaseName = 'purl'
+version = '1.0'
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.+'
+}
+
+compileJava {
+    options.encoding = "UTF-8"
+}
+
+sourceSets {
+    main.java.srcDirs = ['src']
+    sourceSets.test.java.srcDirs = ['test']
+}
+
+uploadArchives {
+    configuration = configurations.archives
+
+    repositories.mavenDeployer {
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+        //repository(url: "file://localhost/tmp/myRepo/")
+        repository(url: "${nexusUrl}/content/repositories/releases") {
+            authentication(userName: nexusUsername, password: nexusPassword)
+        }
+        snapshotRepository(url: "${nexusUrl}/content/repositories/snapshots") {
+            authentication(userName: nexusUsername, password: nexusPassword)
+        }
+
+        pom {
+            project {
+                name 'Pure URL Builder'
+                url 'https://github.com/romansl/PureURLBuilder'
+
+                developers {
+                    developer {
+                        id 'romansl'
+                        name 'Roman Leukin'
+                        email 'leukinrs@gmail.com'
+                    }
+                }
+
+                scm {
+                    url 'https://github.com/romansl/PureURLBuilder'
+                    connection 'scm:git:git@github.com:romansl/PureURLBuilder.git'
+                    developerConnection 'scm:git:git@github.com:romansl/PureURLBuilder.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+            }
+        }
+    }
+}
+
+install {
+    configuration = configurations.archives
+}
+
+task sourceJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task docsJar(type: Jar, dependsOn:javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourceJar
+    archives docsJar
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}

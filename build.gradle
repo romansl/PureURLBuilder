@@ -5,7 +5,7 @@ repositories {
 }
 
 dependencies {
-    compile('com.google.android:android:1.6+')
+    testCompile 'junit:junit:4.+'
 }
 
 compileJava {
@@ -14,6 +14,7 @@ compileJava {
 
 sourceSets {
     main.java.srcDirs = ['src']
+    sourceSets.test.java.srcDirs = ['test']
 }
 
 sourceCompatibility = 1.6

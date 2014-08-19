@@ -1,7 +1,5 @@
 package com.romansl.url;
 
-import org.apache.http.NameValuePair;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -91,14 +89,6 @@ public class URL {
 
     public URL withParam(final String name, final String[] values) {
         return new ArrayParam(this, name, values);
-    }
-
-    public URL withParam(final Collection<NameValuePair> pairList) {
-        URL next = this;
-        for (final NameValuePair item : pairList) {
-            next = new Param(next, item.getName(), item.getValue());
-        }
-        return next;
     }
 
     public URL withParam(final Map<String, String> map) {
