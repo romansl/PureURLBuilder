@@ -1,0 +1,1 @@
+gradlew -b deploy.gradle clean uploadArchives

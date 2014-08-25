@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
 
-group = 'com.romansl'
+group = 'com.github.romansl'
 archivesBaseName = 'purl'
 version = '1.0'
 
@@ -33,17 +33,20 @@ uploadArchives {
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
         //repository(url: "file://localhost/tmp/myRepo/")
-        repository(url: "${nexusUrl}/content/repositories/releases") {
+        repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
             authentication(userName: nexusUsername, password: nexusPassword)
         }
-        snapshotRepository(url: "${nexusUrl}/content/repositories/snapshots") {
+        snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
             authentication(userName: nexusUsername, password: nexusPassword)
         }
 
         pom {
             project {
                 name 'Pure URL Builder'
+                description 'URL builder based on pure functional principles. No side effects. ' +
+                            'Immutable. Thread-safe. Easy to use.'
                 url 'https://github.com/romansl/PureURLBuilder'
+                packaging 'jar'
 
                 developers {
                     developer {
